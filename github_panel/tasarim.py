@@ -1,5 +1,5 @@
 """
-tasarim.py — Rakip Fiyat Takibi paneli için görsel katman.
+tasarim.py — Halka Açık Ürün Bilgileri paneli için görsel katman.
 
 Veri okuma / hesaplama app.py'de; bu dosya yalnızca görünümü üretir.
 Satır biçimi (her takip edilen ilan bir sözlük, app.py'deki ilanlari_donustur() üretir):
@@ -345,8 +345,7 @@ def ust_baslik(sekmeler: list[str], son_tarama_fn) -> str:
         with sol:
             st.segmented_control("Sekme", sekmeler, key="sekme", on_change=_degisti, label_visibility="collapsed")
         with orta:
-            st.markdown('<div class="ust-baslik-yazi"><b>Rakip Fiyat Takibi</b>'
-                        '<span>Pazaryerleri ve mağaza siteleri · saat başı</span></div>', unsafe_allow_html=True)
+            st.markdown('<div class="ust-baslik-yazi"><b>Halka Açık Ürün Bilgileri</b></div>', unsafe_allow_html=True)
         with sag:
             rozet = ('<div class="ust-canli ok"><span></span>Canlı takip</div>' if canli
                      else '<div class="ust-canli gec"><span></span>Tarama gecikti</div>')
@@ -606,7 +605,7 @@ def rakip_govde(satirlar: list[dict], degisen_ids: set, dusen_ids: set, not_: st
     with st.container(key="pt_rakip_tablosu"):
         a, b = st.columns([1.1, 1.3])
         with a:
-            st.markdown('<div class="pt-table-head"><h2>İlan bazlı rakip fiyatları</h2></div>', unsafe_allow_html=True)
+            st.markdown('<div class="pt-table-head"><h2>İlan bazlı ürün bilgileri</h2></div>', unsafe_allow_html=True)
         with b:
             secenekler = ["Tümü", "Kuponlu", "Sepet indirimli", "Fiyatı değişen", "BuyBox'ta"]
             filtre = st.segmented_control("Filtre", secenekler, default="Tümü",
@@ -819,7 +818,7 @@ def alt_bant(platformlar: list[str] | None = None) -> None:
         logo = logo.replace('height="18" width="18"', 'height="28" width="28"').replace("font-size:13px", "font-size:17px")
         kutular += '<div class="pt-logo">' + (logo or html.escape(k)) + "</div>"
     st.markdown(
-        '<div class="pt-footer" lang="tr"><div class="top"><span>Takip edilen satış kanalları</span>'
-        '<span style="text-transform:none;letter-spacing:0;font-weight:500">Rakip Fiyat Takibi · saat başı güncellenir</span></div>'
+        '<div class="pt-footer" lang="tr"><div class="top"><span>Satış kanalları</span>'
+        '<span style="text-transform:none;letter-spacing:0;font-weight:500">Halka açık ürün bilgileri</span></div>'
         f'<div class="pt-logos" style="grid-template-columns:repeat({max(len(liste), 1)},minmax(0,1fr))">{kutular}</div></div>',
         unsafe_allow_html=True)

@@ -31,7 +31,7 @@ def _tasarim_yukle():
 tasarim = _tasarim_yukle()
 
 # ================= SAYFA AYARLARI =================
-st.set_page_config(page_title="Rakip Fiyat Takibi", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Halka Açık Ürün Bilgileri", page_icon="📊", layout="wide")
 
 GSHEET_NAME = "Rakip_Fiyat_Takip"      # tarama script'inin yazdığı Google Sheet
 WS_GUNCEL = "Guncel"
@@ -255,7 +255,7 @@ def _guncel_excel(satirlar):
                 v = "Evet" if v else ("Hayır" if r.get("bb_sahibi") else "")
             s[b] = v
         kayit.append(s)
-    return _excel(pd.DataFrame(kayit, columns=[b for b, _ in EXCEL_SUTUNLARI]), "Rakip_Fiyatlari")
+    return _excel(pd.DataFrame(kayit, columns=[b for b, _ in EXCEL_SUTUNLARI]), "Urun_Bilgileri")
 
 
 # ================= RAKİP FİYATLARI SEKMESİ =================
@@ -264,7 +264,7 @@ def rakip_sayfasi(satirlar, guncelleme, yas_dk):
     kanal_durumu = load_durum()
     tasarim.veri_uyarilari(kanal_durumu, yas_dk, GECIKME_ESIGI_DK)
     if not satirlar:
-        st.warning("Henüz veri yok. Bilgisayarda rakip_script.py çalıştıktan sonra burada görünecek "
+        st.warning("Henüz veri yok. İlk tarama tamamlandıktan sonra burada görünecek "
                    f"(Google Sheet: {GSHEET_NAME} · {WS_GUNCEL}).")
         return
 
@@ -293,12 +293,12 @@ def rakip_sayfasi(satirlar, guncelleme, yas_dk):
     with c4:
         st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
         zaman = simdi_tr().strftime("%d-%m-%Y_%H-%M")
-        st.download_button("📥 Excel'e Aktar", _guncel_excel(satirlar), f"Rakip_Fiyatlari_{zaman}.xlsx",
+        st.download_button("📥 Excel'e Aktar", _guncel_excel(satirlar), f"Urun_Bilgileri_{zaman}.xlsx",
                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key="rk_excel")
 
     degisen, dusen = son_24s_degisenler(satirlar)
     notu = (f"Veri: {_tarih_metni(guncelleme)} taraması." if guncelleme else "") + \
-        " Fiyatlar oturum açılmamış bir müşterinin gördüğü fiyatlardır."
+        " Bilgiler, sitelerin herkese açık ürün sayfalarında görünen bilgilerdir."
     tasarim.rakip_govde(satirlar, degisen, dusen, notu)
 
 
@@ -336,7 +336,7 @@ def gecmis_sayfasi(satirlar):
     with c4:
         st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
         st.download_button("📥 Excel'e Aktar", _excel(tablo[["Model"] + gosterilen], "Degisim_Gecmisi"),
-                           f"Rakip_Degisim_{model.replace('/', '-')}_{simdi_tr():%d-%m-%Y}.xlsx",
+                           f"Urun_Degisim_{model.replace('/', '-')}_{simdi_tr():%d-%m-%Y}.xlsx",
                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key="gc_excel")
 
     with st.container(key="pt_gecmis_kart"):
@@ -375,7 +375,7 @@ tasarim.tema_uygula()
 if ACILIS_ANIMASYONU and not st.session_state.get("acilis_gosterildi"):
     st.session_state["acilis_gosterildi"] = True
     tasarim.acilis_animasyonu()
-FIYAT_SEKMESI, GECMIS_SEKMESI = ":material/sell: Rakip Fiyatları", ":material/history: Değişim Geçmişi"
+FIYAT_SEKMESI, GECMIS_SEKMESI = ":material/sell: Ürün Bilgileri", ":material/history: Değişim Geçmişi"
 
 _satirlar, _guncelleme = load_guncel()
 _yas = tarama_yasi_dk(_guncelleme)
