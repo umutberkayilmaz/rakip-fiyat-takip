@@ -1,6 +1,8 @@
+import importlib.util
 import io
 import os
 import re
+import sys
 from datetime import datetime, timedelta, timezone
 
 import altair as alt
@@ -9,7 +11,24 @@ import pandas as pd
 import streamlit as st
 from google.oauth2.service_account import Credentials
 
-import tasarim
+# tasarim.py her zaman bu dosyanın yanındaki kopyadan ve güncel haliyle yüklenir
+# (repoda başka bir yerde eski bir tasarim.py olsa ya da sunucu eski sürümü hafızada tutsa bile).
+_TASARIM_YOLU = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tasarim.py")
+
+
+def _tasarim_yukle():
+    zaman = os.path.getmtime(_TASARIM_YOLU)
+    modul = sys.modules.get("rakip_tasarim")
+    if modul is None or getattr(modul, "_yuklenme_zamani", None) != zaman:
+        spec = importlib.util.spec_from_file_location("rakip_tasarim", _TASARIM_YOLU)
+        modul = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(modul)
+        modul._yuklenme_zamani = zaman
+        sys.modules["rakip_tasarim"] = modul
+    return modul
+
+
+tasarim = _tasarim_yukle()
 
 # ================= SAYFA AYARLARI =================
 st.set_page_config(page_title="Rakip Fiyat Takibi", page_icon="📊", layout="wide")
