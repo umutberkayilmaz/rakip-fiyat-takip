@@ -19,6 +19,7 @@ WS_GUNCEL = "Guncel"
 WS_GECMIS = "Gecmis"
 WS_DURUM = "Durum"
 GECIKME_ESIGI_DK = 120                 # tarama (saat başı) bundan eskiyse panel uyarı gösterir
+ACILIS_ANIMASYONU = True               # sayfa açılınca/yenilenince düello animasyonu (kapatmak için False)
 
 # Bilgisayarda Google bağlantısı olmadan denemek için: RAKIP_YEREL_EXCEL=..\Rakip_Fiyat_Guncel.xlsx
 YEREL_EXCEL = os.environ.get("RAKIP_YEREL_EXCEL", "")
@@ -351,6 +352,10 @@ def gecmis_sayfasi(satirlar):
 
 # ================= SAYFA =================
 tasarim.tema_uygula()
+# Animasyon sadece sayfa açıldığında / yenilendiğinde oynar; filtre ya da sekme değişince tekrar oynamaz
+if ACILIS_ANIMASYONU and not st.session_state.get("acilis_gosterildi"):
+    st.session_state["acilis_gosterildi"] = True
+    tasarim.acilis_animasyonu()
 FIYAT_SEKMESI, GECMIS_SEKMESI = ":material/sell: Rakip Fiyatları", ":material/history: Değişim Geçmişi"
 
 _satirlar, _guncelleme = load_guncel()
@@ -366,4 +371,4 @@ if _aktif == GECMIS_SEKMESI:
     gecmis_sayfasi(_satirlar)
 else:
     rakip_sayfasi(_satirlar, _guncelleme, _yas)
-tasarim.alt_bant()
+tasarim.alt_bant(sorted({r["platform"] for r in _satirlar if r.get("platform")}))
