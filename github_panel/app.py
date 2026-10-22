@@ -33,7 +33,8 @@ tasarim = _tasarim_yukle()
 # ================= SAYFA AYARLARI =================
 st.set_page_config(page_title="Halka Açık Ürün Bilgileri", page_icon="📊", layout="wide")
 
-GSHEET_NAME = "Rakip_Fiyat_Takip"      # tarama script'inin yazdığı Google Sheet
+GSHEET_NAME = "Rakip_Fiyat_Takip"      # tarama script'inin yazdığı Google Sheet (GSHEET_URL boşsa bu adla aranır)
+GSHEET_URL = "https://docs.google.com/spreadsheets/d/1O03J_sIxVanGHxnVUgFH5_gdLAZ6S1ENn7lefn3BXc4/edit"                      # Sheet'in linki (doluysa Sheet bu linkle açılır; rakip_script.py ile aynı)
 WS_GUNCEL = "Guncel"
 WS_GECMIS = "Gecmis"
 WS_DURUM = "Durum"
@@ -90,7 +91,8 @@ def _sayfa_degerleri(ad):
     if not client:
         return []
     try:
-        return client.open(GSHEET_NAME).worksheet(ad).get_all_values(value_render_option="UNFORMATTED_VALUE")
+        sh = client.open_by_url(GSHEET_URL) if GSHEET_URL else client.open(GSHEET_NAME)
+        return sh.worksheet(ad).get_all_values(value_render_option="UNFORMATTED_VALUE")
     except gspread.WorksheetNotFound:
         return []
 
